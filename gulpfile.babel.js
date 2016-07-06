@@ -3,12 +3,13 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import browserSync from 'browser-sync'
 import del from 'del';
 import {stream as wiredep} from 'wiredep';
+
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
+
 const styles = {
     'in': 'assets/stylesheets/**/*.scss',
-    'tmp': '.tmp/css',
-    'out': 'dist/css'
+    'tmp': '.tmp/css'
 };
 const scripts = {
     'in': 'assets/javascripts/**/*.js',
@@ -92,16 +93,11 @@ gulp.task('html', ['styles', 'scripts'], () => {
 });
 gulp.task('images', () => {
     return gulp.src(images.in)
-        .pipe($.if($.if.isFile, $.cache($.imagemin({
+        .pipe($.imagemin({
             progressive: true,
             interlaced: true,
-            // don't remove IDs from SVGs, they are often used
-            // as hooks for embedding and styling
             svgoPlugins: [{cleanupIDs: false}]
-        })).on('error', function(err) {
-            console.log(err);
-            this.end();
-        })))
+        }))
         .pipe(gulp.dest(images.out));
 });
 gulp.task('fonts', () => {
